@@ -15,9 +15,16 @@
 </form>
 
 
+<hr>
+<a href="<?=self::createLink('sign/registration');?>" class="btn btn-info">
+    Nová registrace
+</a>
+
+
 <?php
     if ($user->isUserLogged()):
 ?>
+<hr>
 <h3>Uživatel <em><?=$user->getData('email');?></em> je přihlášen</h3>
     <a href="<?=self::createLink('sign/logout');?>" class="btn btn-danger">
         Odhlásit se

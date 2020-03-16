@@ -72,6 +72,25 @@ class Config {
 
     /**
      * Uzivatelske role
+     * V systému budou jen 3, pro rychlejsi provoz je tak muzeme udrzovat i zde
      */
     public const ROLE_ADMIN = 'admin';
+    public const ROLE_PEDAGOG = 'pedagog';
+    public const ROLE_RODIC = 'rodic';
+
+    public const ROLE_ADMIN_ID = 1;
+    public const ROLE_PEDAGOG_ID = 2;
+    public const ROLE_RODIC_ID = 3;
+
+
+
+    /**
+     * Mod pro vyuziti registracniho formulare
+     */
+    public CONST PROFIL_FORM_REG_MODE = 'reg'; // Registrace
+    public CONST PROFIL_FORM_USER_MODE = 'user'; // Úprava profilu uzivatele
+
+
+    // Univerzalni tajny klic pro registraci pedagogu
+    public CONST PEDAGOG_VERIFY_CODE_VALUE = '3s5df4sd35f4sA78#';
 }

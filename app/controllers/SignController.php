@@ -16,7 +16,6 @@ use phpboom\services\Register;
  * @package app\controllers
  */
 class SignController extends BaseController {
-      
     
     /** @var UserModel */ 
     private $userModel;
@@ -55,7 +54,7 @@ class SignController extends BaseController {
             $this->actionLogout();
 
         } elseif ($action === 'registration') {
-            // @todo: doplnit actionMetodu a sablony
+            $this->actionRegistration();
 
         } elseif ($action === 'send-password') {
             // @todo: doplnit actionMetodu a sablony
@@ -106,6 +105,58 @@ class SignController extends BaseController {
 
         $this->setHeaderText('Přihlášení uživatele');
     }
+
+
+    /**
+     * Akce pro registraci uzivatele
+     *
+     * @throws \Exception
+     */
+    public function actionRegistration(): void
+    {
+        // Odeslal uzivatel formular registrace?
+        if ($this->request->getPost('profilSubmit')) {
+
+            // Overení dat formuláre presunu do modelu
+            // Delam to z toho duvodu, ze toto overeni bude spolecne jak pro registraci tak upravu profilu
+            // Vyhnu se tak nezadouci duplicite kodu
+            $formData = $this->request->getPost();
+            $result = $this->userModel->verifyProfilFormData($formData);
+
+            if ($result === true) {
+                // Vytvorim uzivatele
+                $dataToSave = [];
+                $dataToSave['email'] = $formData['profilEmail'];
+                $dataToSave['password'] = md5($formData['profilPass']);
+                $newUserId = $this->userModel->save($dataToSave);
+                // Struktura moji zkladni tabulky v db test, tabulka user, obsahuje stale jen zakldni atributy
+                // Vaše už by měla být doplněna min. o atributy jmeno a prijmeni
+                // @todo - dodelejte si (doplnte) ulozeni techto atributu
+
+                // Vytvorim jeho vazbu na roli
+                // @todo: zatim reseno jen pro pedagogy
+                $dataToSave = [];
+                $dataToSave['user_id'] = $newUserId;
+                $dataToSave['role_id'] = Config::ROLE_PEDAGOG_ID;
+                $this->userModel->save($dataToSave, UserModel::TABLE_USER_JOIN_ROLE_NAME);
+
+                // Presmeruju uzivatele na stranku prihlaseni
+                $this->redirect('sign/login');
+
+            } else {
+                $this->setFlashMessage(UserModel::$profilFormStates[$result], 'warning');
+            }
+
+        }
+
+
+        // Nastavím mód profilového formuláře jako registrace
+        // Formulář budu totiž jinde využívat jak pro registraci, tak jej bude mít uživatel k dispozici pro změnu svého profilu
+        $this->addToTemplate('profilFormMode', Config::PROFIL_FORM_REG_MODE);
+
+        $this->setHeaderText('Registrace uživatele');
+    }
+
 
 
     /**

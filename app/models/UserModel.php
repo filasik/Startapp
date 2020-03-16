@@ -3,6 +3,7 @@
 namespace app\models;
 
 
+use app\conf\Config;
 use Tracy\Debugger;
 
 /**
@@ -17,6 +18,13 @@ class UserModel extends BaseModel {
     public const TABLE_USER_NAME = 'user';
     public const TABLE_ROLE_NAME = 'role';
     public const TABLE_USER_JOIN_ROLE_NAME = 'user_role';
+
+
+    public static $profilFormStates = [
+        0 => 'Hesla se neshodují',
+        1 => 'Email je již používán jiným účtem, zvolte prosím jiný',
+        2 => 'Zadaný tajný klíč není platný'
+    ];
 
 
     /**
@@ -83,16 +91,16 @@ class UserModel extends BaseModel {
     }
 
 
-
     /**
-     * Uloží nového uživatele
+     * Uloží nového uživatele/roli/vazbu_na_roli
      *
      * @param array $data
+     * @param string $table
      * @return mixed
      */
-    public function save($data)
+    public function save($data, $table = self::TABLE_USER_NAME)
     {
-        $this->getDb()->insertRecords(self::TABLE_USER_NAME, $data);
+        $this->getDb()->insertRecords($table, $data);
         return $this->getDb()->getLastInsertID();
     }
 
@@ -124,4 +132,56 @@ class UserModel extends BaseModel {
         $cond = "id = ".$id;
         return $this->getDb()->updateRecords(self::TABLE_USER_NAME, $data, $cond);
     }
+
+
+    /**
+     * Metoda pro overeni dat profiloveho formulare
+     *
+     * @param array $data
+     * @return bool|mixed
+     * @throws \Exception
+     */
+    public function verifyProfilFormData(array $data)
+    {
+        $isRegistration = $data['profilMode'] === Config::PROFIL_FORM_REG_MODE;
+        // Dvojí konstrola znamená, že ikdyž jsem zkontroloval shodu hesel pomocí javascriptu u klienta
+        // Provedu stejnou kontrolu na straně serveru
+        // Hesla jsou u registrace povinná u zmeny profilu volitelná
+        if ($data['profilPass'] && $data['profilPass'] !== $data['profilPassConfirm']) {
+            return 0;
+        }
+
+        // Kontrola emailu, který musí být v db jedinečný
+        // 1. Hledán uzivatele se stejným emailem
+        $user = $this->getUserByEmail($data['profilEmail']);
+
+        // 2. Uzivatel s takovým emailem jiz existuje
+        if ($user) {
+            // 3. Pokud je to registrace - je to automaticky chyba
+            if ($isRegistration) {
+                return 1;
+            }
+
+            // 4. Pokud je to uprava profilu, chyba nastava v tom pripade, ze si uzivatel meni email na email,
+            // ktery je ale obsazeny nekym jinym
+            if ((int) $data['userId'] !== (int) $user['id']) {
+                return 1;
+            }
+        }
+
+        // Kontrola tajneho klice, ktery se zadava jen u registrace
+        if ($isRegistration) {
+            // Dvoji kontrola - bud je to pedagog - ti maji vsichni stejny klic
+            // Nebo je to rodic a ti maji klic pridelen u svych deti
+            // Zatim si zpracujeme pouze pedagogy
+            // @todo: implementovat registraci rodice az budeme mit prislusnou strukturu db pro deti
+            if ($data['profilVerifyCode'] !== Config::PEDAGOG_VERIFY_CODE_VALUE) {
+                return 2;
+            }
+        }
+
+        // Vsechno je v cajku, metoda vraci true
+        return true;
+    }
+
 }
