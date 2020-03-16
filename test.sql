@@ -14,7 +14,9 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `role` (`id`, `role`, `role_name`) VALUES
-(1,	'admin',	'Administrátor aplikace');
+(1,	'admin',	'Administrátor aplikace'),
+(2,	'pedagog',	'Pedagog'),
+(3,	'rodic',	'Rodič');
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -42,4 +44,4 @@ CREATE TABLE `user_role` (
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES
 (1,	1);
 
--- 2020-03-08 18:21:53
+-- 2020-03-16 13:43:36
