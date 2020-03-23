@@ -94,6 +94,7 @@ class UserModel extends BaseModel {
                 INNER JOIN ".self::TABLE_USER_JOIN_ROLE_NAME." ON id = role_id
                 WHERE user_id = $id";
         $this->getDb()->executeQuery($sql);
+        // Fuj - toto je stejne jako vyse - musime priste nekam zapouzdrit
         $data = [];
         while($row = $this->getDb()->getRows()) {
             $data[] = $row;

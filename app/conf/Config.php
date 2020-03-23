@@ -68,6 +68,10 @@ class Config {
         'sign' => 'Login/Registrace'
     ];
 
+    /**
+     * Polozky menu urcene pouze pro uzivatele s roli admin
+     * @var array
+     */
     public static $adminItems = [
         'admin' => 'Administrace'
     ];

@@ -96,6 +96,7 @@ class SignController extends BaseController {
             if ($this->user->login($email, $password)) {
                 // Zde bychom si mohli implementovat aktulizaci casu posledniho prihlaseni uzivatele
                 // A dale presmerovat klienta do zabezpecene casti aplikace
+                // Pokud se jedna o admina, presmeruju do AdminController
                 if ($this->user->isInRole(Config::ROLE_ADMIN)) {
                     $this->redirect('admin');
                 }

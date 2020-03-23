@@ -71,6 +71,7 @@ class AdminController extends BaseController {
     public function actionDefault()
     {
         $this->setHeaderText('Admin - správa uživatelů');
+        // Vytahnu si z DB vsechny uzivatele
         $users = $this->userModel->getAllUsers();
         $this->addToTemplate('users', $users);
         Debugger::barDump($users, 'uzivatele');
