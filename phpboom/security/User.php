@@ -161,7 +161,7 @@ class User {
     {
         $roles = $this->userModel->getUserRolesByUserId($this->getId());
         foreach ($roles as $role) {
-            $this->roles[$role['role']] = $role['roleName'];
+            $this->roles[$role['role']] = $role['role_name'];
         }
     }
 
@@ -173,7 +173,7 @@ class User {
      * @return array
      * @throws \Exception
      */
-    private function getRoles(): array
+    public function getRoles(): array
     {
         if ($this->isUserLogged() && !$this->roles) {
             $this->setRoles();

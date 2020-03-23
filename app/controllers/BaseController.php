@@ -60,6 +60,7 @@ abstract class BaseController {
         $this->user = new User($userModel);
         if ($this->user->isUserLogged()) {
             Debugger::barDump($this->user->getData(), 'Logged user data');
+            Debugger::barDump($this->user->getRoles(), 'role');
         }
 
         // Volani metody zivotniho cyklu Controlleru
@@ -87,6 +88,14 @@ abstract class BaseController {
         foreach (Config::$myitems as $fileName => $title) {
             $this->menu->addItem($fileName, $title);
         }
+
+        // Doplnim o menu admina
+        if ($this->user->isInRole(Config::ROLE_ADMIN)) {
+            foreach (Config::$adminItems as $fileName => $title) {
+                $this->menu->addItem($fileName, $title);
+            }
+        }
+
         /** @var Request $request */
         $request = $this->register->getService(Request::class);
         $controllerName = $request->getUrlPart(Config::CONTROLLER_KEY);
@@ -181,7 +190,7 @@ abstract class BaseController {
         $template = $this->getTemplate();
         if (!file_exists($template)) {
             Debugger::log('Chyba aplikace - šablona  neexistuje:'. $template, 'critical');
-            $this->redirect('404.php', 404);
+            $this->redirect('404.php');
             //throw new \Exception('Chyba aplikace - šablona  neexistuje');
         }
 

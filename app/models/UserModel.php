@@ -29,6 +29,9 @@ class UserModel extends BaseModel {
 
     /**
      * Vrátí všechny uživatale v poli
+     * Metoda nevraci role uzivatele
+     * Uměli bychom doplnit tento prikaz aby vracel take role?
+     * Třeba oddelene čarkou? GROUP_CONCAT()??
      *
      * @return array|null
      * @throws \Exception
@@ -37,7 +40,11 @@ class UserModel extends BaseModel {
     {
         $sql = "SELECT * FROM ".self::TABLE_USER_NAME;
         $this->getDb()->executeQuery($sql);
-        return $this->getDb()->getRows();
+        $data = [];
+        while($row = $this->getDb()->getRows()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
 
@@ -87,7 +94,11 @@ class UserModel extends BaseModel {
                 INNER JOIN ".self::TABLE_USER_JOIN_ROLE_NAME." ON id = role_id
                 WHERE user_id = $id";
         $this->getDb()->executeQuery($sql);
-        return $this->getDb()->getRows();
+        $data = [];
+        while($row = $this->getDb()->getRows()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
 

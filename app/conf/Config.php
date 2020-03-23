@@ -65,8 +65,11 @@ class Config {
      */
     public static $myitems = [
         'default' => 'Home',
-        'sign' => 'Login/Registrace',
-        'user' => 'Uživatelé'
+        'sign' => 'Login/Registrace'
+    ];
+
+    public static $adminItems = [
+        'admin' => 'Administrace'
     ];
 
 
