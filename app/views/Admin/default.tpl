@@ -30,7 +30,7 @@
                     <a href="<?=self::createLink('admin/updateUserRole/'.$myUser['id']);?>" class="btn btn-info">
                         Role
                     </a>
-                    <a href="javascript:;" data-url="<?=self::createLink('admin/deleteUser/'.$myUser['id']);?>" class="deleteUserBtn btn btn-danger">
+                    <a href="javascript:;" data-url="<?=self::createLink('admin/deleteUser/20');?>" class="deleteUserBtn btn btn-danger">
                         Odstranit
                     </a>
                 </td>

@@ -46,12 +46,17 @@ $(function () {
         // Pouzivame k tomu jednoduchou fci get knihovny jQuery
         $.get({
             'url': url
-        }).done(function () {
+        }).done(function (data) {
             // Tato callback funkce se vola po dokonceni ajax pozadavku
             // Protoze nechceme prekreslit celou stránku -
             // - jednoduše jen opět pomocí skvélé knivny jQuery skryjeme řádek odstraněného uzivatele
-            row.addClass('success');
-            row.hide(1000);
+            if (data.status === 'success') {
+                row.addClass('success');
+                row.hide(1000);
+            } else {
+                // Doslo k chybe radek zůstava a je podbarven cervene
+                row.addClass('danger');
+            }
         });
     });
 

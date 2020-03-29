@@ -92,7 +92,21 @@ class Db {
     public function getRows(): ?array
     {
         return $this->last->fetch_array(MYSQLI_ASSOC);
-   
+    }
+
+
+    /**
+     * Pomocná funkce, která transformuje řádky databáze do PHP pole
+     *
+     * @return array
+     */
+    public function getRowsDataArray(): array
+    {
+        $data = [];
+        while($row = $this->getRows()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
 

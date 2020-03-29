@@ -152,11 +152,13 @@ class AdminController extends BaseController {
      * Akce úpravy rolí uzivatele
      *
      * @param $id
+     * @throws \Exception
      */
-    public function actionUpdateUserRole($id)
+    public function actionUpdateUserRole($id): void
     {
         // @todo - implementace zpracování formuláře nastavení rolí
         $this->setHeaderText('Admin - úprava rolí uživatele');
+        $roles = $this->userModel->getAllRoles();
     }
 
 
@@ -174,17 +176,27 @@ class AdminController extends BaseController {
 
         // Doslo k chybě - uzivatel s tímto ID nebyl nalezen
         if (!$myUser) {
-            $this->redirect('admin/default');
-        } else {
-            $this->userModel->delete($id);
-
-            // Pokud je pozadavek ajaxový ukoncuju vsechny dalsi akce odeslanim response
+            Debugger::log('Chyba - uživatel s ID: '.$id. ' neexistuje');
+            // Pokud se jedna o Ajax volani - musim predat informaci o chybe
             if ($this->request->isAjax()) {
+                // Response odpovedi bude obsahovat status error
+                echo json_encode(['status' => 'error']);
                 $this->sendResponse();
             }
-            // Pokud je to klasický požadavek provedu přesměrování na default akci
+            // U neajaxoveho pozadavku jen presmeruju
             $this->redirect('admin/default');
         }
+
+        $this->userModel->delete($id);
+
+        // Pokud je pozadavek ajaxový ukoncuju vsechny dalsi akce odeslanim response
+        if ($this->request->isAjax()) {
+            echo json_encode(['status' => 'success']);
+            $this->sendResponse();
+        }
+        // Pokud je to klasický požadavek provedu přesměrování na default akci
+        $this->redirect('admin/default');
+
     }
 
 
