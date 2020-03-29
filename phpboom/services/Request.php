@@ -176,5 +176,15 @@ class Request {
         // Byla vyzadana hodnota daneho indexu, ale pole $this->post ji neobsahuje :-/
         return false;
     }
-    
+
+
+    /**
+     * Jednoduchá funkce, která nám detekuje, zdali je požadavek ajaxový
+     *
+     * @return bool
+     */
+    public function isAjax(): bool
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
 }

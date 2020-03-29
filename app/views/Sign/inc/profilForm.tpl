@@ -17,7 +17,7 @@ Pomocná proměnná $isRegistration pro přehlednější řízení formulaře
 
     <div class="form-group">
         Email:
-        <input type="email" name="profilEmail" required class="form-control" maxlength="100">
+        <input type="email" name="profilEmail" required value="<?=@$myUser['email'];?>" class="form-control" maxlength="100">
     </div>
 
     <div class="well" id="passwordSection">
@@ -42,10 +42,17 @@ Pomocná proměnná $isRegistration pro přehlednější řízení formulaře
 
     <input type="hidden" name="profilMode" value="<?=$profilFormMode;?>">
 
+
+    <input type="hidden" name="userId" value="<?=@$myUser['id'];?>">
+
+
+
+    <?php $submitBtnCaption = 'Registrovat se';?>
     <?php if (!$isRegistration): ?>
-        <input type="text" name="userId" value="<?=$userId;?>">
+        <?php $submitBtnCaption = 'Upravit profil';?>
     <?php endif;?>
 
-
-    <button type="submit" name="profilSubmit" class="btn btn-warning" value="1">Registrovat se</button>
+    <button type="submit" name="profilSubmit" class="btn btn-warning" value="1">
+        <?=$submitBtnCaption;?>
+    </button>
 </form>

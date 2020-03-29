@@ -38,7 +38,13 @@ class UserModel extends BaseModel {
      */
     public function getAllUsers(): ?array
     {
-        $sql = "SELECT * FROM ".self::TABLE_USER_NAME;
+        $sql = "SELECT u.*, GROUP_CONCAT(r.role_name SEPARATOR ', ') AS role 
+                FROM ".self::TABLE_USER_NAME." AS u
+                LEFT JOIN ".self::TABLE_USER_JOIN_ROLE_NAME." AS ur ON ur.user_id = u.id 
+                LEFT JOIN ".self::TABLE_ROLE_NAME." AS r ON ur.role_id = r.id 
+                GROUP BY u.id
+                ORDER BY u.email
+                ";
         $this->getDb()->executeQuery($sql);
         $data = [];
         while($row = $this->getDb()->getRows()) {

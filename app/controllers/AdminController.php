@@ -54,10 +54,17 @@ class AdminController extends BaseController {
         parent::manageAction();
 
         $action = $this->request->getUrlPart(Config::ACTION_KEY);
-        // $id = $this->request->getUrlPart(Config::ID_KEY);
+        $id = $this->request->getUrlPart(Config::ID_KEY);
 
-        // Zatim implementujeme jen jednu metodu default
-        $this->actionDefault();
+        if ($action === 'updateUser') {
+            $this->actionUpdateUser($id);
+        } elseif ($action === 'updateUserRole') {
+            $this->actionUpdateUserRole($id);
+        } elseif ($action === 'deleteUser') {
+            $this->actionDeleteUser($id);
+        } else {
+            $this->actionDefault();
+        }
 
         $this->render();
     }
@@ -68,7 +75,7 @@ class AdminController extends BaseController {
      *
      * @throws \Exception
      */
-    public function actionDefault()
+    public function actionDefault(): void
     {
         $this->setHeaderText('Admin - správa uživatelů');
         // Vytahnu si z DB vsechny uzivatele
@@ -77,6 +84,108 @@ class AdminController extends BaseController {
         Debugger::barDump($users, 'uzivatele');
     }
 
+
+    /**
+     * Metoda upavy profilu uzivatele
+     *
+     * @param $id
+     * @throws \Exception
+     */
+    public function actionUpdateUser($id): void
+    {
+        // Nejprve si vytáhneme data o uzivateli z DB
+        $myUser = $this->userModel->getUserById($id);
+
+        // Doslo k chybě - uzivatel s tímto ID nebyl nalezen
+        if (!$myUser) {
+            $this->setFlashMessage('Uživatel s tímto ID nebyl nalezen', 'danger');
+            $this->addToTemplate('showForm', false);
+
+        } else {
+            // Uzivatel podle ID nalezen - pokracuju touto vetvi
+            // Nejprve overim, jestli nebyl odeslan formular upravy profilu
+            if ($this->request->getPost('profilSubmit')) {
+                $formData = $this->request->getPost();
+                // Volam metodtu, kterou jsme si uz pripravili u registrace
+                $result = $this->userModel->verifyProfilFormData($formData);
+
+                // Data byla vyplnena spravne
+                if ($result === true) {
+                    // Vytvorim pole upravenych dat pro ulozeni do DB
+                    $dataToSave = [];
+                    $dataToSave['email'] = $formData['profilEmail'];
+                    // @todo - doplnte si chybejici atributy jmeno a prijmeni
+
+                    // Menilo se heslo? Bude se menit v DB?
+                    // Staci se "zeptat" zdali bylo vyplneno prislusne formularove policko
+                    // O validaci hesla se nám uz postarala metoda UserModel::verifyProfilFormData()
+                    if ($formData['profilPass']) {
+                        $dataToSave['password'] = md5($formData['profilPass']);
+                    }
+
+                    // Ulozim db DB
+                    $this->userModel->update($formData['userId'], $dataToSave);
+                    $this->setFlashMessage('Data byla úspěšně upravena', 'success');
+
+                    // Obnovim data upravovaneho uzivatele novymi!
+                    // Musim to udelat proto, ze po odeslani zustavam na teze strance s formularem
+                    // A zatim admina nikam nepresmerovavam
+                    $myUser = $this->userModel->getUserById($formData['userId']);
+                } else {
+                    // Data nebyla vyplnena spravne
+                    $this->setFlashMessage(UserModel::$profilFormStates[$result], 'warning');
+                }
+
+            }
+
+            $this->addToTemplate('showForm', true);
+            $this->addToTemplate('profilFormMode', Config::PROFIL_FORM_USER_MODE);
+            $this->addToTemplate('myUser', $myUser);
+        }
+
+
+        $this->setHeaderText('Admin - úprava profilu uživatele');
+    }
+
+
+    /**
+     * Akce úpravy rolí uzivatele
+     *
+     * @param $id
+     */
+    public function actionUpdateUserRole($id)
+    {
+        // @todo - implementace zpracování formuláře nastavení rolí
+        $this->setHeaderText('Admin - úprava rolí uživatele');
+    }
+
+
+    /**
+     * Procesni akce odstraneni uzivatele
+     * Nemá šablonu, jen odpovádí na požadavky podle typu requestu
+     *
+     * @param $id
+     * @throws \Exception
+     */
+    public function actionDeleteUser($id): void
+    {
+        // Nejprve si vytáhneme data o uzivateli z DB
+        $myUser = $this->userModel->getUserById($id);
+
+        // Doslo k chybě - uzivatel s tímto ID nebyl nalezen
+        if (!$myUser) {
+            $this->redirect('admin/default');
+        } else {
+            $this->userModel->delete($id);
+
+            // Pokud je pozadavek ajaxový ukoncuju vsechny dalsi akce odeslanim response
+            if ($this->request->isAjax()) {
+                $this->sendResponse();
+            }
+            // Pokud je to klasický požadavek provedu přesměrování na default akci
+            $this->redirect('admin/default');
+        }
+    }
 
 
 }

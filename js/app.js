@@ -24,7 +24,36 @@ $(function () {
 
         // Povolím odeslání formuláře
         return true;
-    })
+    });
+
+
+
+    // Následující blok zachyti odeslani pozadavku na ostraneni uzivatele
+    $(document).on('click', '.deleteUserBtn', function () {
+        // Na tlacitku uzivatele si sejmeme hodnotu url z hodnoty atributu 'data-url'
+        var url = $(this).attr('data-url');
+
+        // Nactu si radek tabulky daneho uzivatele
+        var row = $(this).closest('tr');
+
+        // Chceme mazat uzivatele - polozime jeste overujici dotaz
+        if (confirm('Chcete opravdu smazat uzivatele??') !== true) {
+            // Zabranim vykonani akce
+            return false;
+        }
+
+        // Ajaxové volání akce odstraneni uzivatele
+        // Pouzivame k tomu jednoduchou fci get knihovny jQuery
+        $.get({
+            'url': url
+        }).done(function () {
+            // Tato callback funkce se vola po dokonceni ajax pozadavku
+            // Protoze nechceme prekreslit celou stránku -
+            // - jednoduše jen opět pomocí skvélé knivny jQuery skryjeme řádek odstraněného uzivatele
+            row.addClass('success');
+            row.hide(1000);
+        });
+    });
 
 
 });
