@@ -52,7 +52,9 @@ $(function () {
             // Tato callback funkce se vola po dokonceni ajax pozadavku
             // Protoze nechceme prekreslit celou stránku -
             // - jednoduše jen opět pomocí skvélé knihovny jQuery skryjeme řádek odstraněného uzivatele
-            if (data.status === 'success') {
+            console.log(data);
+            var response = JSON.parse(data);
+            if (response.status === 'success') {
                 row.addClass('success');
                 row.hide(1000);
             } else {
