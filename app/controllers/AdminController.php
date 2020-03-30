@@ -179,7 +179,8 @@ class AdminController extends BaseController {
             Debugger::log('Chyba - uživatel s ID: '.$id. ' neexistuje');
             // Pokud se jedna o Ajax volani - musim predat informaci o chybe
             if ($this->request->isAjax()) {
-                // Response odpovedi bude obsahovat status error
+                // Response odpovedi bude obsahovat status error a rovnou odesilam odpoved
+                // Server uz nic dalsho nedela
                 echo json_encode(['status' => 'error']);
                 $this->sendResponse();
             }

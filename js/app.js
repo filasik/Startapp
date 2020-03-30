@@ -43,13 +43,15 @@ $(function () {
         }
 
         // Ajaxové volání akce odstraneni uzivatele
-        // Pouzivame k tomu jednoduchou fci get knihovny jQuery
+        // Pouzivame k tomu jednoduchou fci get() knihovny jQuery
+        // Ta zajistí Ajaxový požavek i zpracování získané odpovedit
+        // Více např. zde: https://www.w3schools.com/jquery/ajax_get.asp (B)
         $.get({
             'url': url
         }).done(function (data) {
             // Tato callback funkce se vola po dokonceni ajax pozadavku
             // Protoze nechceme prekreslit celou stránku -
-            // - jednoduše jen opět pomocí skvélé knivny jQuery skryjeme řádek odstraněného uzivatele
+            // - jednoduše jen opět pomocí skvélé knihovny jQuery skryjeme řádek odstraněného uzivatele
             if (data.status === 'success') {
                 row.addClass('success');
                 row.hide(1000);
