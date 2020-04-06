@@ -32,7 +32,8 @@ class Config {
     
     
     public CONST
-        BASEURL = 'http://localhost/startapp/', // Vychozi URL aplikace
+        //BASEURL = 'http://localhost/startapp/',
+        BASEURL = 'http://startapp.test/', // Vychozi URL aplikace
         VIEWSFOOLDER = './app/views'; // Vychozi cesta k souborum šablon
 
 

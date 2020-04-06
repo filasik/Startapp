@@ -32,6 +32,7 @@ class DefaultController extends BaseController {
         // Volani verejnych (public) nebo chráněných (protected) metod BaseControlleru
         $this->setHeaderText('Úvodní stránka');
         $this->render();
+        phpinfo();
     }
     
     

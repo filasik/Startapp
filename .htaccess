@@ -10,7 +10,7 @@ RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule . /startapp/index.php [L]
+RewriteRule . /index.php [L]
 
 # Následující zápis definuje úroven reportu chyb a upozornění serveru pro tento projekt
 # https://perishablepress.com/advanced-php-error-handling-via-htaccess/
